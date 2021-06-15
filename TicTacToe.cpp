@@ -9,6 +9,7 @@ int mainMenu();
 void onePlayerMenu();
 void easyGame();
 void mediumGame();
+void hardGame();
 void twoPlayerGame();
 int getNextMove(char board[3][3]);
 char checkWin(char board[3][3]);
@@ -22,11 +23,8 @@ int checkDiagonals(char board[3][3],char search, char other);
 
 //main
 int main(){
-
     
     int select = 0;
-
-    
 
     while(select != 3){
         select = mainMenu();
@@ -37,7 +35,6 @@ int main(){
         else    
             cout << "Goodbye" << endl;
     }
-
 
     //cout << "hello world" << endl;
 
@@ -87,7 +84,7 @@ void onePlayerMenu(){
     cout << " Please game difficulty:" << endl;
     cout << " 1. Easy" << endl;
     cout << " 2. Medium" << endl;
-    cout << " 3. Impossible" << endl;
+    cout << " 3. Hard" << endl;
     cout << " 4. Exit" << endl;
 
     cin >> input;
@@ -102,7 +99,7 @@ void onePlayerMenu(){
     else if(input == 2)
         mediumGame();
     else if(input == 3)
-        cout << "Impossible" << endl;
+        hardGame();
     else    
         cout << "Exiting to main menu" << endl;
 
@@ -226,7 +223,7 @@ int getEasyMove(char board[3][3], int turn){
     return move;
 }
 
-//runs game agains easy ai
+//runs game against easy ai
 void easyGame(){
     char board[3][3];
     int move = 0;
@@ -264,6 +261,7 @@ void easyGame(){
     return;
 }
 
+//runs game against medium ai
 void mediumGame(){
     char board[3][3];
     int move = 0;
@@ -313,6 +311,61 @@ void mediumGame(){
     return;
 }
 
+//runs game against hardish ai
+void hardGame(){
+    char board[3][3];
+    int move = 0;
+    int cWin = -1;
+    int cLose = -1;
+
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            board[i][j] = ' ';
+        }
+    }
+
+    printBoard(board);
+    for(int i = 0; i < 9; i++){
+        char win = ' ';
+
+        //get move
+        if(i%2 == 0){
+            move = getNextMove(board) -1;
+            board[move/3][move%3] = 'X';
+        }
+        else if (board[1][1] == ' '){
+            board[1][1] = 'O';
+            cout << "Computer has taken its turn." << endl;
+        }
+        else{
+            cWin = canWin(board);
+            cLose = canLose(board);
+
+            if(cWin >= 0)
+                board[cWin/3][cWin%3] = 'O';
+            else if(cLose >= 0)
+                board[cLose/3][cLose%3] = 'O';
+            else{
+                move = getEasyMove(board, i);
+                board[move/3][move%3] = 'O';
+            }
+
+            cout << "Computer has taken its turn." << endl;
+        }
+
+        //check for game end
+        win = checkWin(board);
+        if(win != ' '){
+            cout << win << " has won the game." << endl;
+            printBoard(board);
+            return;
+        }
+        printBoard(board);
+    }
+    return;
+}
+
+//checks if ai can win
 int canWin(char board[3][3]){
     int move = -1;
 
@@ -329,6 +382,7 @@ int canWin(char board[3][3]){
     return -1;
 }
 
+//checks if ai will lose if it doesnt block
 int canLose(char board[3][3]){
     int move = -1;
 
@@ -370,6 +424,7 @@ int checkHorizontals (char board[3][3], char search, char other){
     return -1;
 }
 
+//checks if 3 in a row can occur on vertical
 int checkVerticals(char board[3][3],char search, char other){
     int counter = 0;
 
@@ -394,6 +449,7 @@ int checkVerticals(char board[3][3],char search, char other){
     return -1;
 }
 
+//checks if 3 in a row can occur on diagonal
 int checkDiagonals(char board[3][3],char search, char other){
     int counter = 0;
     //left to right diagonal
@@ -428,3 +484,4 @@ int checkDiagonals(char board[3][3],char search, char other){
 
     return -1;
 }
+
